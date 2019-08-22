@@ -22,7 +22,7 @@ This is really simple to use and will return an itemstack which you can then use
 Bukkit.getOnlinePlayers().forEach(player -> { //Looping through all online player using lambda
     ItemStack item = null; //Initiating the itemstack
     try { 
-        item = new MapBuilder().withImage(ImageIO.read(new URL("https://site.com/image.png"))) //Initializing the calss and setting an image as background
+        item = new MapBuilder().withImage(ImageIO.read(new URL("https://site.com/image.png"))) //Initializing the utility class and setting an image as background
                 .addText(0, 0, MinecraftFont.Font, "Hello there") //Adding some text with minecraft default font at 0, 0
                 .addCursor(20, 20, CursorDirection.EAST, CursorType.WHITE_DOT).build(); //Adding a cursor (in our case a white dot) to the map
     } catch (IOException e) { //Exception thrown if url is invalid
