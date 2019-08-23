@@ -16,10 +16,10 @@ Cross-version compatible. This can be used from 1.8 to 1.14 with no errors.
 Really good for static (non-updating) images.
 
 ## Usage
-This is really simple to use and will return an ItemStack which you can then use to give it to a player for example. In this example, a map is given to all online players.
+This is really simple to use and will return an ItemStack which you can then use to give it to a player for example. In this example, a map containing an image from the web is given to all online players.
 
 ```java
-Bukkit.getOnlinePlayers().forEach(player -> { //Looping through all online player using lambda
+Bukkit.getOnlinePlayers().forEach(player -> { //Looping through all online players using lambda
     ItemStack item = null; //Initiating the ItemStack
     try { 
         item = new MapBuilder().setRenderOnce(true).setImage(ImageIO.read(new URL("https://site.com/image.png"))) //Initializing the utility class and setting an image as background
