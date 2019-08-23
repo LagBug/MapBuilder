@@ -1,4 +1,4 @@
-package me.lagbug.captchax.utils;
+package me.lagbug.common.builders;
 
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
@@ -19,34 +19,104 @@ import org.bukkit.map.MapView.Scale;
 
 public class MapBuilder {
 
+	public static final String VERSION = "1.1";
+	
     private MapView map;
     private BufferedImage image;
     private List<Text> texts;
     private MapCursorCollection cursors;
-    private boolean rendered;
+    private boolean rendered, renderOnce;
 
     public MapBuilder() {
         cursors = new MapCursorCollection();
         texts = new ArrayList<>();
         rendered = false;
+        renderOnce = true;
     }
 
-    public MapBuilder withImage(BufferedImage image) {
+    /**
+     * Set and image to be used
+     *
+     * @param image the buffered image to use
+     * @return the instance of this class
+     */
+    public MapBuilder setImage(BufferedImage image) {
         this.image = image;
         return this;
     }
+    
+    /**
+     * Get the image that's being used
+     *
+     * @return the image used
+     */
+    public BufferedImage getImage() {
+    	return image;
+    }
 
+    /**
+     * Set and image to be used
+     *
+     * @param x, y the coordinates to add the text
+     * @param font the font to be used
+     * @param text the string that will be displayed 
+     * @return the instance of this class
+     */
     public MapBuilder addText(int x, int y, MapFont font, String text) {
         this.texts.add(new Text(x, y, font, text));
         return this;
     }
+    
+    /**
+     * Gets the list of all the texts used
+     *
+     * @return an array list of all the texts
+     */
+    public List<Text> getTexts() {
+    	return texts;
+    }
 
+    /**
+     * Adds a cursor to the map
+     *
+     * @param x, y the coordinates to add the cursor
+     * @param direction the direction to display the cursor
+     * @param type the type of the cursor
+     * @return the instance of this class
+     */
     @SuppressWarnings("deprecation")
     public MapBuilder addCursor(int x, int y, CursorDirection direction, CursorType type) {
         cursors.addCursor(x, y, (byte) direction.getId(), (byte) type.getId());
         return this;
     }
+    
+    /**
+     * Gets all the currently used cursors
+     *
+     * @return an array list of all the texts
+     */
+    public MapCursorCollection getCursors() {
+    	return cursors;
+    }
+    
+    /**
+     * Sets whether the image should only be rendered once.
+     * Good for static images and reduces lag.
+     *
+     * @param renderOnce the value to determine if it's going to be rendered once
+     * @return the instance of this class
+     */
+    public MapBuilder setRenderOnce(boolean renderOnce) {
+    	this.renderOnce = renderOnce;
+    	return this;
+    }
 
+    
+    /**
+     * Builds an itemstack of the map.
+     *
+     * @return an itemstack of the map containing what's been set from the above methods
+     */
     @SuppressWarnings("deprecation")
     public ItemStack build() {
         ItemStack item = new ItemStack(Material.MAP);
@@ -60,7 +130,7 @@ public class MapBuilder {
         map.addRenderer(new MapRenderer() {
             @Override
             public void render(MapView mapView, MapCanvas mapCanvas, Player player) {
-                if (rendered) {
+                if (rendered && renderOnce) {
                     return;
                 }
             
@@ -90,6 +160,12 @@ public class MapBuilder {
         return item;
     }
  
+    /**
+     * Gets a map id cross-version using reflection
+     *
+     * @param mapView the map to get the id
+     * @return the instance of this class
+     */
     private short getMapId(MapView mapView) {
         try {
             return (short) mapView.getId();
