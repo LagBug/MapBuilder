@@ -23,7 +23,7 @@ Bukkit.getOnlinePlayers().forEach(player -> { //Looping through all online playe
     ItemStack item = null; //Initiating the ItemStack
     try { 
         item = new MapBuilder().setRenderOnce(true).setImage(ImageIO.read(new URL("https://site.com/image.png"))) //Initializing the utility class and setting an image as background
-                .addText(0, 0, MinecraftFont.Font, "Hello there") //Adding some text with Minecaft default font at 0, 0
+                .addText(0, 0, MinecraftFont.Font, "Hello there") //Adding some text with Minecraft default font at 0, 0
                 .addCursor(20, 20, CursorDirection.EAST, CursorType.WHITE_DOT).build(); //Adding a cursor (in our case a white dot) to the map
     } catch (IOException e) { //Exception thrown if url is invalid
             e.printStackTrace();
