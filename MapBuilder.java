@@ -16,7 +16,6 @@ import java.util.List;
 public class MapBuilder {
 
     public static final String VERSION = "1.2";
-
     private MapView map;
     private BufferedImage image;
     private List<Text> texts;
@@ -108,7 +107,6 @@ public class MapBuilder {
         return this;
     }
 
-
     /**
      * Builds an itemstack of the map.
      *
@@ -117,27 +115,20 @@ public class MapBuilder {
     @SuppressWarnings("deprecation")
     public ItemStack build() {
         ItemStack item = new ItemStack(Material.MAP);
-
         map = Bukkit.createMap(Bukkit.getWorlds().get(0));
         List<MapRenderer> old = map.getRenderers();
-
         map.setScale(Scale.NORMAL);
         map.getRenderers().forEach(map::removeRenderer);
-
         map.addRenderer(new MapRenderer() {
             @Override
             public void render(MapView mapView, MapCanvas mapCanvas, Player player) {
-                if (rendered && renderOnce) {
+                if (rendered && renderOnce)
                     return;
-                }
-
                 if (player == null || !player.isOnline()) {
                     old.forEach(map::addRenderer);
                 } else {
-                    if (image != null) {
+                    if (image != null)
                         mapCanvas.drawImage(0, 0, image);
-
-                    }
                     texts.forEach(text -> mapCanvas.drawText(text.getX(), text.getY(), text.getFont(), text.getText()));
                     mapCanvas.setCursors(cursors);
                     rendered = true;
@@ -152,7 +143,6 @@ public class MapBuilder {
         } else {
             item.setDurability(getMapId(map));
         }
-
         return item;
     }
 
@@ -210,7 +200,6 @@ public class MapBuilder {
 }
 
 class Text {
-
     private int x;
     private int y;
     private MapFont font;
