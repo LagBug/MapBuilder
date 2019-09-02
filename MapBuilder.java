@@ -13,13 +13,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 public class MapBuilder {
 
-    public static final String VERSION = "1.2";
+    public static final String VERSION = "1.3";
     private MapView map;
     private BufferedImage image;
     private List<Text> texts;
     private MapCursorCollection cursors;
+    
     private boolean rendered;
     private boolean renderOnce;
 
@@ -40,12 +43,12 @@ public class MapBuilder {
     }
 
     /**
-     * Set and image to be used
+     * Set an image to be used
      *
      * @param image the buffered image to use
      * @return the instance of this class
      */
-    public MapBuilder setImage(BufferedImage image) {
+    public MapBuilder setImage(@Nonnull BufferedImage image) {
         this.image = image;
         return this;
     }
@@ -53,12 +56,12 @@ public class MapBuilder {
     /**
      * Set and image to be used
      *
-     * @param x,   y the coordinates to add the text
+     * @param x, y the coordinates to add the text
      * @param font the font to be used
      * @param text the string that will be displayed
      * @return the instance of this class
      */
-    public MapBuilder addText(int x, int y, MapFont font, String text) {
+    public MapBuilder addText(@Nonnull int x, @Nonnull int y, @Nonnull MapFont font, @Nonnull String text) {
         this.texts.add(new Text(x, y, font, text));
         return this;
     }
@@ -66,7 +69,7 @@ public class MapBuilder {
     /**
      * Gets the list of all the texts used
      *
-     * @return an array list of all the texts
+     * @return a List of all the texts
      */
     public List<Text> getTexts() {
         return texts;
@@ -75,13 +78,13 @@ public class MapBuilder {
     /**
      * Adds a cursor to the map
      *
-     * @param x,        y the coordinates to add the cursor
+     * @param x, y the coordinates to add the cursor
      * @param direction the direction to display the cursor
-     * @param type      the type of the cursor
+     * @param type the type of the cursor
      * @return the instance of this class
      */
     @SuppressWarnings("deprecation")
-    public MapBuilder addCursor(int x, int y, CursorDirection direction, CursorType type) {
+    public MapBuilder addCursor(@Nonnull int x, @Nonnull int y, @Nonnull CursorDirection direction, @Nonnull CursorType type) {
         cursors.addCursor(x, y, (byte) direction.getId(), (byte) type.getId());
         return this;
     }
@@ -89,7 +92,7 @@ public class MapBuilder {
     /**
      * Gets all the currently used cursors
      *
-     * @return an array list of all the texts
+     * @return a MapCursorCollection with all current cursors
      */
     public MapCursorCollection getCursors() {
         return cursors;
@@ -102,35 +105,43 @@ public class MapBuilder {
      * @param renderOnce the value to determine if it's going to be rendered once
      * @return the instance of this class
      */
-    public MapBuilder setRenderOnce(boolean renderOnce) {
+    public MapBuilder setRenderOnce(@Nonnull boolean renderOnce) {
         this.renderOnce = renderOnce;
         return this;
     }
 
     /**
-     * Builds an itemstack of the map.
+     * Builds an ItemStack of the map.
      *
-     * @return an itemstack of the map containing what's been set from the above methods
+     * @return the ItemStack of the map containing what's been set from the above methods
      */
     @SuppressWarnings("deprecation")
     public ItemStack build() {
         ItemStack item = new ItemStack(Material.MAP);
         map = Bukkit.createMap(Bukkit.getWorlds().get(0));
-        List<MapRenderer> old = map.getRenderers();
+        
         map.setScale(Scale.NORMAL);
         map.getRenderers().forEach(map::removeRenderer);
         map.addRenderer(new MapRenderer() {
             @Override
             public void render(MapView mapView, MapCanvas mapCanvas, Player player) {
-                if (rendered && renderOnce)
+                if (rendered && renderOnce) {
                     return;
-                if (player == null || !player.isOnline()) {
-                    old.forEach(map::addRenderer);
-                } else {
-                    if (image != null)
+                }
+                
+                if (player != null && player.isOnline()) {
+                    if (image != null) {
                         mapCanvas.drawImage(0, 0, image);
-                    texts.forEach(text -> mapCanvas.drawText(text.getX(), text.getY(), text.getFont(), text.getText()));
-                    mapCanvas.setCursors(cursors);
+                    }
+                    
+                    if (!texts.isEmpty()) {
+                    	texts.forEach(text -> mapCanvas.drawText(text.getX(), text.getY(), text.getFont(), text.getMessage()));	
+                    }
+                    
+                    if (cursors.size() > 0) {
+                    	mapCanvas.setCursors(cursors);	
+                    }
+                    
                     rendered = true;
                 }
             }
@@ -152,7 +163,7 @@ public class MapBuilder {
      * @param mapView the map to get the id
      * @return the instance of this class
      */
-    private short getMapId(MapView mapView) {
+    private short getMapId(@Nonnull MapView mapView) {
         try {
             return (short) mapView.getId();
         } catch (NoSuchMethodError ex) {
@@ -167,6 +178,9 @@ public class MapBuilder {
         }
     }
 
+    /**
+     * An enum containing user friendly cursor directions. Instead of using the integers, you can instead use this enum
+     */
     public enum CursorDirection {
         SOUTH(0), SOUTH_WEST_SOUTH(1), SOUTH_WEST(2), SOUTH_WEST_WEST(3), WEST(4), NORTH_WEST_WEST(5), NORTH_WEST(6),
         NORTH_WEST_NORTH(7), NORTH(8), NORTH_EAST_NORTH(9), NORTH_EAST(10), NORTH_EAST_EAST(11), EAST(12),
@@ -174,73 +188,130 @@ public class MapBuilder {
 
         private final int id;
 
-        private CursorDirection(int id) {
+        private CursorDirection(@Nonnull int id) {
             this.id = id;
         }
 
+        /**
+         * Returns the actual integer to use
+         *
+         * @return the integer of the specified enum type 
+         */
         public int getId() {
             return this.id;
         }
     }
 
+    /**
+     * An enum containing user friendly cursor types. Instead of using the integers, you can instead use this enum
+     */
     public enum CursorType {
         WHITE_POINTER(0), GREEN_POINTER(1), RED_POINTER(2), BLUE_POINTER(3), WHITE_CLOVER(4), RED_BOLD_POINTER(5),
         WHITE_DOT(6), LIGHT_BLUE_SQUARE(7);
 
         private final int id;
 
-        private CursorType(int id) {
+        private CursorType(@Nonnull int id) {
             this.id = id;
         }
 
+        /**
+         * Returns the actual integer to use
+         *
+         * @return the integer of the specified enum type 
+         */
         public int getId() {
             return this.id;
         }
     }
 }
 
+/**
+ * A storage class to save text information to later be used in order to write in maps
+ */
 class Text {
+	
     private int x;
     private int y;
     private MapFont font;
-    private String string;
+    private String message;
 
-    public Text(int x, int y, MapFont font, String text) {
+    public Text(@Nonnull int x, @Nonnull int y, @Nonnull MapFont font, @Nonnull String message) {
         setX(x);
         setY(y);
         setFont(font);
-        setString(text);
+        setMessage(message);
     }
 
+    /**
+     * Gets the x position for the text to be displayed
+     *
+     * @return the x position
+     */
     public int getX() {
         return x;
     }
 
-    public void setX(int x) {
+    /**
+    * Sets the x position of the text to display it
+    *
+    * @param x the x postion
+    */
+    public void setX(@Nonnull int x) {
         this.x = x;
     }
 
+    /**
+     * Gets the y position for the text to be displayed
+     *
+     * @return the y position
+     */
     public int getY() {
         return y;
     }
 
-    public void setY(int y) {
+    /**
+     * Sets the y position of the text to display it
+     *
+     * @param y the y position
+     */
+    public void setY(@Nonnull int y) {
         this.y = y;
     }
 
+    /**
+     * Gets the font to be used
+     *
+     * @return the MapFont that is used
+     */
     public MapFont getFont() {
         return font;
     }
 
-    public void setFont(MapFont font) {
+    /**
+     * Sets what font should be used
+     *
+     * @param font the actual font
+     */
+    public void setFont(@Nonnull MapFont font) {
         this.font = font;
     }
 
-    public String getString() {
-        return string;
+    /**
+     * Gets what test will be displayed
+     *
+     * @return the text
+     */
+    public String getMessage() {
+        return message;
     }
 
-    public void setString(String string) {
-        this.string = string;
+    /**
+     * Sets what text will be displayed
+     *
+     * @param message the actual text
+     */
+    public void setMessage(@Nonnull String message) {
+        this.message = message;
     }
 }
