@@ -1,13 +1,5 @@
 package me.lagbug.common.builders;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.MapMeta;
-import org.bukkit.map.*;
-import org.bukkit.map.MapView.Scale;
-
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -15,9 +7,21 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.map.MapCanvas;
+import org.bukkit.map.MapCursorCollection;
+import org.bukkit.map.MapFont;
+import org.bukkit.map.MapRenderer;
+import org.bukkit.map.MapView;
+import org.bukkit.map.MapView.Scale;
+
 public class MapBuilder {
 
-    public static final String VERSION = "1.3";
+    public static final String VERSION = "1.4";
     private MapView map;
     private BufferedImage image;
     private List<Text> texts;
@@ -25,12 +29,14 @@ public class MapBuilder {
     
     private boolean rendered;
     private boolean renderOnce;
+    private boolean isOnePointThirteenOrMore;
 
     public MapBuilder() {
         cursors = new MapCursorCollection();
         texts = new ArrayList<>();
         rendered = false;
         renderOnce = true;
+        isOnePointThirteenOrMore = Bukkit.getVersion().contains("1.13") || Bukkit.getVersion().contains("1.14");
     }
 
     /**
@@ -117,7 +123,7 @@ public class MapBuilder {
      */
     @SuppressWarnings("deprecation")
     public ItemStack build() {
-        ItemStack item = new ItemStack(Material.MAP);
+        ItemStack item = new ItemStack(isOnePointThirteenOrMore ? Material.FILLED_MAP : Material.MAP);
         map = Bukkit.createMap(Bukkit.getWorlds().get(0));
         
         map.setScale(Scale.NORMAL);
@@ -147,9 +153,9 @@ public class MapBuilder {
             }
         });
 
-        if (Bukkit.getVersion().contains("1.13") || Bukkit.getVersion().contains("1.14")) {
+        if (isOnePointThirteenOrMore) {
             MapMeta mapMeta = (MapMeta) item.getItemMeta();
-            mapMeta.setMapId(getMapId(map));
+            mapMeta.setMapView(map);
             item.setItemMeta(mapMeta);
         } else {
             item.setDurability(getMapId(map));
