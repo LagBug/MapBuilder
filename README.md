@@ -24,7 +24,8 @@ try {
     	.setRenderOnce(true) //Since this will be a static image, we only want it rendered once
 	.setImage(ImageIO.read(new URL("https://site.com/image.png"))) //Setting an image from a URL as background
         .addText(0, 0, MinecraftFont.Font, "Hello there") //Adding some text with the Minecraft default font at 0, 0
-        .addCursor(20, 20, CursorDirection.EAST, CursorType.WHITE_DOT).build(); //Adding a cursor (in our case a white dot) to the map
+        .addCursor(20, 20, CursorDirection.EAST, CursorType.WHITE_DOT) //Adding a cursor (in our case a white dot) to the map
+	.build(); //Finally using the build method to generate an ItemStack 
    
     Bukkit.getOnlinePlayers().forEach(player -> player.getInventory().addItem(item)); //Looping through all the online players and adding the ItemStack to their inventory
 } catch (IOException e) { //Exception thrown if the URL provided is invalid
