@@ -19,17 +19,17 @@ As you might know, maps are an awesome and unique way to display images or text.
 This is really simple to use and will return an ItemStack which you can then use to give it to a player for example. In this example, a map containing an image from the web is given to all online players.
 
 ```java
-Bukkit.getOnlinePlayers().forEach(player -> { //Looping through all online players using lambda
-    ItemStack item = null; //Initiating the ItemStack
-    try { 
-        item = new MapBuilder().setRenderOnce(true).setImage(ImageIO.read(new URL("https://site.com/image.png"))) //Initializing the utility class and setting an image as background
-                .addText(0, 0, MinecraftFont.Font, "Hello there") //Adding some text with Minecraft default font at 0, 0
-                .addCursor(20, 20, CursorDirection.EAST, CursorType.WHITE_DOT).build(); //Adding a cursor (in our case a white dot) to the map
-    } catch (IOException e) { //Exception thrown if url is invalid
-            e.printStackTrace();
-    }
-        player.getInventory().addItem(item); //Finally adding the item to the players inventory
-});
+try {
+	ItemStack item = new MapBuilder() //Initializing the MapBuilder class
+		.setRenderOnce(true) //Since this will be a static image, we only want it rendered once
+		.setImage(ImageIO.read(new URL("https://site.com/image.png"))) //Setting an image from a URL as background
+        .addText(0, 0, MinecraftFont.Font, "Hello there") //Adding some text with the Minecraft default font at 0, 0
+        .addCursor(20, 20, CursorDirection.EAST, CursorType.WHITE_DOT).build(); //Adding a cursor (in our case a white dot) to the map
+   
+	Bukkit.getOnlinePlayers().forEach(player -> player.getInventory().addItem(item)); //Looping through all the online players and adding the ItemStack to their inventory
+} catch (IOException e) { //Exception thrown if the URL provided is invalid
+    e.printStackTrace();
+}
 ```
 
 ## Result
