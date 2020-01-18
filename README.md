@@ -1,7 +1,7 @@
 # MapBuilder
 As you might know, maps are an awesome and unique way to display images or text. In this resource, you're going to learn how to do it through my utility class and you're also going to be given the full utility class containing some really useful methods. Spigot thread: https://www.spigotmc.org/threads/mapbuilder-a-utility-class-to-create-maps-1-8-1-14.391888/
 
-[![](https://codescene.io/projects/6652/status.svg) Get more details at **codescene.io**.](https://codescene.io/projects/6652/jobs/latest-successful/results)
+[![](https://codescene.io/projects/6652/status.svg)
 
 ## Prerequisites
 - Java 8 or above.
