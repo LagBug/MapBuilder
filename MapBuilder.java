@@ -32,14 +32,14 @@ public class MapBuilder {
     
     private boolean rendered;
     private boolean renderOnce;
-    private boolean isOnePointFourteen;
+    private boolean isNewVersion;
 
     public MapBuilder() {
         cursors = new MapCursorCollection();
         texts = new ArrayList<>();
         rendered = false;
         renderOnce = true;
-        isOnePointFourteen = Bukkit.getVersion().contains("1.14");
+        isNewVersion = Bukkit.getVersion().contains("1.15") || Bukkit.getVersion().contains("1.14") || Bukkit.getVersion().contains("1.13");
     }
 
     /**
@@ -129,7 +129,7 @@ public class MapBuilder {
         ItemStack item = null;
         
         try {
-        	item = new ItemStack(isOnePointFourteen ? Material.MAP : Material.valueOf("MAP")); 
+        	item = new ItemStack(isNewVersion ? Material.MAP : Material.valueOf("MAP")); 
         } catch (AuthorNagException ex) {
         	Utils.log("Could not get material for the current spigot version. This won't be shown again until server restats");
         }
@@ -163,7 +163,7 @@ public class MapBuilder {
             }
         });
 
-        if (isOnePointFourteen) {
+        if (isNewVersion) {
             MapMeta mapMeta = (MapMeta) item.getItemMeta();
             mapMeta.setMapView(map);
             item.setItemMeta(mapMeta);
