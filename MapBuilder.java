@@ -314,7 +314,7 @@ class Text {
     }
 
     /**
-     * Gets what test will be displayed
+     * Gets what text will be displayed
      *
      * @return the text
      */
