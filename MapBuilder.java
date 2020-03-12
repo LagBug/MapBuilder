@@ -18,13 +18,9 @@ import org.bukkit.map.MapFont;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 import org.bukkit.map.MapView.Scale;
-import org.bukkit.plugin.AuthorNagException;
-
-import me.lagbug.common.utils.Utils;
 
 public class MapBuilder {
 
-    public static final String VERSION = "1.5";
     private MapView map;
     private BufferedImage image;
     private List<Text> texts;
@@ -126,14 +122,7 @@ public class MapBuilder {
      */
     @SuppressWarnings("deprecation")
     public ItemStack build() {
-        ItemStack item = null;
-        
-        try {
-        	item = new ItemStack(isNewVersion ? Material.MAP : Material.valueOf("MAP")); 
-        } catch (AuthorNagException ex) {
-        	Utils.log("Could not get material for the current spigot version. This won't be shown again until server restats");
-        }
-                
+        ItemStack item = new ItemStack(isNewVersion ? Material.MAP : Material.valueOf("MAP"));
         map = Bukkit.createMap(Bukkit.getWorlds().get(0));
         
         map.setScale(Scale.NORMAL);
