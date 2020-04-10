@@ -36,5 +36,3 @@ try {
 ## Result
 You can really easily archive something like this
 ![alt text](https://i.ibb.co/qNnqC6C/Screenshot-1.png)
-
-![](https://codescene.io/projects/6652/status.svg)
