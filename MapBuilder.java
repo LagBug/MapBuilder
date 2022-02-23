@@ -1,4 +1,4 @@
-package me.lagbug.common.builders;
+package me.lagbug.xprotect.spigot.common.builders;
 
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
@@ -22,20 +22,30 @@ import org.bukkit.map.MapView.Scale;
 public class MapBuilder {
 
     private MapView map;
-    private BufferedImage image;
     private List<Text> texts;
+    private BufferedImage image;
     private MapCursorCollection cursors;
     
     private boolean rendered;
     private boolean renderOnce;
-    private boolean isNewVersion;
+    private boolean isNewestVersion = false;
+
+    private final String[] newVersions = {"1.13", "1.14", "1.15", "1.16", "1.17", "1.18"};
 
     public MapBuilder() {
         cursors = new MapCursorCollection();
         texts = new ArrayList<>();
         rendered = false;
         renderOnce = true;
-        isNewVersion = Bukkit.getVersion().contains("1.15") || Bukkit.getVersion().contains("1.14") || Bukkit.getVersion().contains("1.13");
+        
+        String version = Bukkit.getVersion();
+        
+        //Adding support for newest versions
+        for (String currentVersion : newVersions) {
+        	if (version.contains(currentVersion)) {
+        		isNewestVersion = true;
+        	}
+        }
     }
 
     /**
@@ -122,7 +132,7 @@ public class MapBuilder {
      */
     @SuppressWarnings("deprecation")
     public ItemStack build() {
-        ItemStack item = new ItemStack(isNewVersion ? Material.MAP : Material.valueOf("MAP"));
+        ItemStack item = new ItemStack(isNewestVersion ? Material.MAP : Material.valueOf("MAP")); 
         map = Bukkit.createMap(Bukkit.getWorlds().get(0));
         
         map.setScale(Scale.NORMAL);
@@ -152,7 +162,7 @@ public class MapBuilder {
             }
         });
 
-        if (isNewVersion) {
+        if (isNewestVersion) {
             MapMeta mapMeta = (MapMeta) item.getItemMeta();
             mapMeta.setMapView(map);
             item.setItemMeta(mapMeta);
@@ -303,7 +313,7 @@ class Text {
     }
 
     /**
-     * Gets what text will be displayed
+     * Gets what test will be displayed
      *
      * @return the text
      */
